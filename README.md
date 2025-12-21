@@ -54,10 +54,11 @@ A simple customer support chatbot with persistent sessions and AI-powered respon
   * System prompt includes guidelines and store information
   * Conversation history is truncated to last 8 messages for context
   * FAQ context is prepended to avoid hallucination
-* **Trade-offs & If I Had More Time:**
+* **Trade-offs:**
 
   * Could implement Redis caching for sessions and responses
   * Better LLM prompt templating and moderation
+  * UI enhancements
   * Add unit/integration tests for services and controllers
 
 ---
