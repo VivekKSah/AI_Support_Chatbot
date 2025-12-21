@@ -76,7 +76,8 @@ body {
 
 .input {
   display: flex;
-  border-top: 1px solid #ddd;
+  border: 1px solid #ddd;
+  border-radius: 20px;
   padding: 8px;
   background: #fafafa;
 }
@@ -148,5 +149,34 @@ body {
 
 .scroll-to-bottom:active {
   transform: translateX(-50%) scale(0.95);
+}
+
+.error-message {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border-radius: 5px;
+  font-size: 14px;
+  max-width: 80%;
+  text-align: center;
+}
+
+.center {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.bottom {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
 }
 

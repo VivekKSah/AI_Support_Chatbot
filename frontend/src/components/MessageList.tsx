@@ -53,7 +53,7 @@ export function MessageList({
         <MessageBubble key={i} message={m} />
       ))}
 
-      {loading && <div className="typing">Agent is typing…</div>}
+      {loading && <div className="typing" aria-live="polite">Agent is typing…</div>}
 
       <div ref={messagesEndRef} />
 

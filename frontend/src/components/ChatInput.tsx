@@ -21,7 +21,7 @@ export function ChatInput({
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && submit()}
         disabled={disabled}
-        placeholder="Ask questions about shipping, returns, or support..."
+        placeholder="Wanna know about..."
       />
       <button onClick={submit} disabled={disabled || !text.trim()}>
 	Send
