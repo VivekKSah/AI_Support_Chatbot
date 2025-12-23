@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "migrate": "psql $DATABASE_URL -f src/migrations/init.sql"
   },
   "dependencies": {
     "@google/generative-ai": "^0.11.0",

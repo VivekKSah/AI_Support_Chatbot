@@ -67,7 +67,7 @@ export async function handleChatMessage(
       ? err
       : "An unknown error occurred";
 
-    throw new Error(message, { cause: err });
+    throw new Error(message);
   } finally {
     client.release();
   }

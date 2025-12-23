@@ -73,6 +73,7 @@ body {
   background: #fafafa;
   margin: 16px 20px;
   flex-shrink: 0;
+  width: calc(100% - 40px);
 }
 
 .input input {
@@ -160,11 +161,18 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  font-size: clamp(14px, 3vh, 20px);
 }
 
 .bottom {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+@media (max-width: 700px) {
+  .chat-container {
+    width: 100%;
+  }
 }
 

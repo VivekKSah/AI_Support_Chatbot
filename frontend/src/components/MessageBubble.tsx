@@ -1,9 +1,10 @@
+import ReactMarkdown from "react-markdown";
 import { Message } from "../types/chat";
 
 export function MessageBubble({ message }: { message: Message }) {
   return (
     <div className={`bubble ${message.sender}`}>
-      {message.text}
+      <ReactMarkdown>{message.text}</ReactMarkdown>
     </div>
   );
 }
