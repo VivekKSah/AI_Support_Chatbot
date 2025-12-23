@@ -11,11 +11,10 @@ A simple customer support chatbot with persistent sessions and AI-powered respon
 * Persistent chat sessions across page reloads (via `localStorage` and session IDs)
 * Full conversation history fetching from backend
 * Basic guardrails:
-
   * Input validation (empty messages, length limits)
   * Prompt grounding using store FAQ context
   * Limited conversational context (last 8 messages)
-  * Graceful LLM error handling
+  * Graceful LLM error handling with user-friendly messages
 * Responsive frontend UI with auto-scrolling and modern message bubbles
 
 ---
@@ -41,7 +40,16 @@ A simple customer support chatbot with persistent sessions and AI-powered respon
 
 * React functional components with hooks (`useChat`) for state management.
 * `localStorage` used for persisting session IDs.
-* Auto-scroll and scroll-to-bottom button for better UX.
+* Auto-scroll, typing indicator and scroll-to-bottom button for better UX.
+
+---
+
+## Tech Stack
+
+* **Frontend:** React, Vite, TypeScript
+* **Backend:** Node.js, Express, TypeScript
+* **Database:** PostgreSQL
+* **AI:** Google Generative AI (`gemini-2.5-flash`)
 
 ---
 
@@ -50,11 +58,14 @@ A simple customer support chatbot with persistent sessions and AI-powered respon
 * **Provider:** Google GenAI
 * **Model:** Gemini 2.5 Flash
 * **Prompting:**
-
   * System prompt includes guidelines and store information
   * Conversation history is truncated to last 8 messages for context
   * FAQ context is prepended to avoid hallucination
-* **Trade-offs:**
+  * If AI cannot answer, it recommends contacting human support.
+
+---
+
+## Trade-offs:
 
   * Could implement Redis caching for sessions and responses
   * Better LLM prompt templating and moderation
@@ -108,13 +119,88 @@ cd frontend
 npm install
 ```
 
-2. Start development server:
+2. Create `.env` from `.env.example` and fill in required keys:
+
+```env
+VITE_API_URL=http://backendUrl.com/chat
+```
+
+3. Start development server:
 
 ```bash
 npm run dev
 ```
 
 Frontend runs on: `http://localhost:3000`
+
+---
+
+## API
+
+### GET `/chat/history/:sessionId`
+
+Fetch conversation history for a given session.
+
+**Response:**
+
+```json
+[
+  { "sender": "user", "text": "Hello" },
+  { "sender": "ai", "text": "Hi! How can I help you?" }
+]
+```
+
+### POST `/chat/message`
+
+Send a message to the chatbot. Optionally include `sessionId` to continue an existing conversation.
+
+**Request body:**
+
+```json
+{
+  "message": "Hello",
+  "sessionId": "optional-session-id"
+}
+```
+
+**Response:**
+
+```json
+{
+  "reply": "Hi! How can I help you?",
+  "sessionId": "session-id-for-this-conversation"
+}
+```
+
+**Error format:**
+
+```json
+{
+  "error": {
+    "message": "Message cannot be empty",
+    "code": "INVALID_ARGUMENT"
+  }
+}
+```
+
+**Error codes:**
+
+* `INVALID_ARGUMENT`
+* `NOT_FOUND`
+* `UNAUTHORIZED`
+* `RESOURCE_EXHAUSTED`
+* `INTERNAL`
+* `UNAVAILABLE`
+* `DEADLINE_EXCEEDED`
+
+---
+
+## Database
+
+* `conversations` table stores conversation metadata.
+* `messages` table stores all user and AI messages.
+* Indexed by `conversation_id` for faster retrieval.
+* Messages are deleted automatically when the conversation is deleted (`ON DELETE CASCADE`).
 
 ---
 

@@ -47,10 +47,7 @@ export function useChat() {
         { sender: "ai", text: res.reply }
       ]);
     } catch (err: any) {
-      setMessages((prev) => [
-        ...prev,
-        { sender: "ai", text: err.message || "Something went wrong" }
-      ]);
+      throw err;
     } finally {
       setLoading(false);
     }

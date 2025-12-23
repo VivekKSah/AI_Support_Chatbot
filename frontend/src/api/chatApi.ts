@@ -1,35 +1,49 @@
 import { ChatResponse, Message } from "../types/chat";
+import { AppError } from "../utils/AppError";
 
-const ERROR_MESSAGES = {
-  INVALID_ARGUMENT: "The request body is malformed. Please check the input and try again.",
-  FAILED_PRECONDITION: "Gemini API free tier is not available in your country. Please check availability.",
-  PERMISSION_DENIED: "Your API key doesn't have the required permissions. Please check your API key or contact support.",
-  NOT_FOUND: "The requested resource wasn't found. Please check the request or contact support.",
-  RESOURCE_EXHAUSTED: "You've exceeded the rate limit. Please wait a moment before trying again.",
-  INTERNAL: "An unexpected error occurred on Google's side. Please try again later.",
-  UNAVAILABLE: "The service is temporarily overloaded or down. Please try again later.",
-  DEADLINE_EXCEEDED: "The service was unable to finish processing within the deadline. Please try again later."
+const ERROR_MESSAGES: Record<string, string> = {
+  INVALID_ARGUMENT: "Your message seems invalid. Please check and try again.",
+  FAILED_PRECONDITION: "This feature is not available in your region.",
+  PERMISSION_DENIED: "You do not have permission. Check your API key or contact support.",
+  NOT_FOUND: "Requested data not found. Try again.",
+  RESOURCE_EXHAUSTED: "Rate limit exceeded. Please wait and retry.",
+  INTERNAL: "Internal server error. Please try again later.",
+  UNAVAILABLE: "Service temporarily unavailable. Try again later.",
+  DEADLINE_EXCEEDED: "Request timed out. Please try again.",
 };
+
+function mapToAppError(err: any): AppError {
+  if (!err?.error) {
+    return new AppError("Unknown error occurred", "INTERNAL");
+  }
+
+  const code = err.error.code || "INTERNAL";
+  const message =
+    ERROR_MESSAGES[code] || err.error.message || "An unknown error occurred";
+
+  return new AppError(message, code);
+}
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/chat";
 
 export async function fetchHistory(sessionId: string): Promise<Message[]> {
   const res = await fetch(
-    `http://localhost:5000/chat/history/${sessionId}`
+    `${API_URL}/history/${sessionId}`
   );
 
   if (!res.ok) {
-    throw new Error("Failed to load chat history");
+    const err = await res.json();
+    throw mapToAppError(err);
   }
 
   return res.json();
 }
 
-const API_URL = "http://localhost:5000/chat/message";
-
 export async function sendMessage(
   message: string,
   sessionId?: string
 ): Promise<ChatResponse> {
-  const res = await fetch(API_URL, {
+  const res = await fetch(`${API_URL}/message`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, sessionId })
@@ -37,13 +51,9 @@ export async function sendMessage(
 
   if (!res.ok) {
     const error = await res.json();
-    const errorMessage = getErrorMessage(error.code);
-    throw new Error(errorMessage);
+    throw mapToAppError(error);
   }
 
   return res.json();
 }
 
-function getErrorMessage(code: string): string {
-  return ERROR_MESSAGES[code] || "An unknown error occurred. Please try again later.";
-}

@@ -1,4 +1,3 @@
-// message.model.ts
 export type Message = {
   id: string;
   conversation_id: string;

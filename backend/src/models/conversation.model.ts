@@ -1,4 +1,3 @@
-// conversation.model.ts
 export type Conversation = {
   id: string;
   created_at: string;

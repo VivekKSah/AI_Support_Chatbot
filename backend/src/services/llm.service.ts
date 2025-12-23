@@ -13,7 +13,7 @@ You are a helpful and professional customer support agent for a small e-commerce
 
 Guidelines:
 - Be clear, concise, and friendly.
-- Answer only using the provided store information when relevant.
+- Answer using the provided store information when relevant.
 - Do not make up policies, prices, or guarantees.
 - If you don’t know the answer, politely suggest contacting human support.
 - Keep responses short and helpful.
@@ -73,7 +73,12 @@ Agent:
     return response.trim();
   } catch (error) {
     console.error("LLM Error:", error);
-    return "Sorry, I’m having trouble responding right now. Please try again later.";
+
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return String(error);
   }
 }
 

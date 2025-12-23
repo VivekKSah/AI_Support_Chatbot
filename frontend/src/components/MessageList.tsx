@@ -18,13 +18,13 @@ export function MessageList({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Check if user is far from bottom (10–15% of container height)
+  // Check if user is far from bottom
   const isUserFarFromBottom = (): boolean => {
     const container = containerRef.current;
     if (!container) return false;
 
     const scrollDiff = container.scrollHeight - container.scrollTop - container.clientHeight;
-    const threshold = container.clientHeight * 0.1; // 10% of visible height
+    const threshold = container.clientHeight * 0.25;
     return scrollDiff > threshold;
   };
 

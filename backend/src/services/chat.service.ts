@@ -33,7 +33,7 @@ export async function handleChatMessage(
       [uuidv4(), convId, userMessage]
     );
 
-    // Fetch conversation history (LLM service will truncate)
+    // Fetch conversation history
     const res = await client.query(
       `SELECT sender, text FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC`,
       [convId]
@@ -59,9 +59,15 @@ export async function handleChatMessage(
   } catch (err) {
     await client.query("ROLLBACK");
     console.error("Chat Service Error:", err);
-    throw new Error(
-      "Something went wrong while processing your message. Please try again later."
-    );
+
+    const message =
+     err instanceof Error
+      ? err.message
+      : typeof err === "string"
+      ? err
+      : "An unknown error occurred";
+
+    throw new Error(message, { cause: err });
   } finally {
     client.release();
   }
